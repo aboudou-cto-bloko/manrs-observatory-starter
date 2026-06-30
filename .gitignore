@@ -33,3 +33,12 @@ Thumbs.db
 # Database
 *.sqlite
 *.db
+
+# Artifacts
+*.log
+.env.*.local
+
+# IDE
+*.swp
+*.swo
+*~
