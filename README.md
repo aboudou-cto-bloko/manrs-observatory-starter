@@ -8,6 +8,5 @@ Observatoire de la sécurité du routage Internet en Afrique de l'Ouest.
 
 Accompagnateur : [À remplir]
 
-## Commencer
-Consulter l'archive pour les guides et références :
-https://github.com/aboudou-cto-bloko/manrs-observatory
+## Démarrer le projet
+Initialiser backend, frontend, et infrastructure avec Docker.
