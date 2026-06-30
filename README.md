@@ -1,150 +1,95 @@
-# MANRS Observatory — Reprise de développement
+# MANRS Observatory
 
-État : Juin 2026  
-Binôme : [Ajouter noms]  
-Dernière mise à jour : [Ajouter date]
+Observatoire de la sécurité du routage Internet en Afrique de l'Ouest.
 
-## Objectif
+## État actuel (Juin 2026)
 
-Observatoire de la sécurité du routage Internet en Afrique de l'Ouest.  
-Mesure la conformité de 477 opérateurs réseau aux 4 actions MANRS.
+### ✅ Complété
+- [x] Base de données PostgreSQL (4 tables)
+- [x] Collecteur Python (477 ASN × 6810 préfixes collectés)
+- [x] API REST FastAPI (5 endpoints)
+- [x] Frontend React (5 pages)
+- [x] Docker Compose (infrastructure complète)
+- [x] Mémoire de fin d'études (36 pages)
+- [x] Documentation technique (guides + tutoriel)
 
-## État du projet
+### 📊 Résultats de la première collecte (24 juin 2026)
+- **477 ASN** surveillés dans 16 pays
+- **11 membres MANRS** (2.3%)
+- **51.4%** couverture ROA globale
+- **0%** anti-spoofing (aucun ASN testé bloque le spoofing)
+- **Top** : Mali 60% ROA, Burkina 57.7%
+- **Bottom** : Mauritanie 0%, Guinée-Bissau 0%
 
-### ✅ Fait
-- Base de données PostgreSQL (4 tables)
-- Collecteur Python (5 sources, scheduling 6h)
-- API FastAPI (5 endpoints)
-- Frontend React (5 pages, Atomic Design)
-- Docker Compose (infrastructure conteneurisée)
-- Mémoire LaTeX (36 pages, figures)
+## À faire (Priorités)
 
-### ⚠️ À faire
-- Dockerfile frontend (multi-stage)
-- README.md racine
-- Déploiement (Render/Vercel)
-- Slides soutenance (10 slides)
-- Placeholders mémoire LaTeX
+### 🔴 Priorité 1 — Déploiement bloquant
+- [ ] Créer `frontend/Dockerfile` (multi-stage : build + nginx)
+- [ ] Créer `README.md` racine (CDC : lancer en 10 min max)
+- [ ] Tester `docker compose up` complet end-to-end
+
+### 🟠 Priorité 2 — Mise en ligne
+- [ ] Déployer backend (Render.com free tier ou Railway)
+- [ ] Déployer frontend (Vercel)
+- [ ] URL de démo en ligne (pour présentation)
+
+### 🟡 Priorité 3 — Mémoire + présentation
+- [ ] Remplir placeholders `[À compléter]` dans main.tex (page de garde, chapitre stage)
+- [ ] Créer 10 slides de soutenance (contexte, problématique, architecture, démo, résultats, recommandations)
 
 ## Démarrage rapide
 
-### 1. Lancer le projet localement
-
 ```bash
-# Clone
-git clone https://github.com/aboudou-cto-bloko/manrs-observatory.git
-cd manrs-observatory
+# Cloner l'archive complète (référence)
+git clone https://github.com/aboudou-cto-bloko/manrs-observatory.git archive
 
-# Démarrer les conteneurs
+# Consulter les guides (dans l'archive)
+cd archive
+cat GUIDE_MODULES.md          # Par module
+cat TUTORIEL_COMPLET.md       # Pédagogique
+cat main.pdf                  # Mémoire
+
+# Lancer le projet
 docker compose up -d
-
-# Vérifier que tout tourne
-docker compose ps
-
-# URLs
-- Frontend : http://localhost:3000
-- API : http://localhost:8000/docs
-- PostgreSQL : localhost:5432
-```
-
-### 2. Consulter la documentation
-
-| Fichier | Contenu |
-|---------|---------|
-| `GUIDE_MODULES.md` | Guide par module (5 modules indépendants) |
-| `TUTORIEL_COMPLET.md` | Tutoriel pédagogique (pourquoi/comment/flux) |
-| `JOURNAL_DEV.md` | Journal de développement |
-| `main.pdf` | Mémoire complet (36 pages) |
-
-## Structure du projet
-
-```
-manrs-observatory/
-├── backend/
-│   ├── collector/      # Collecteur Python (5 sources)
-│   ├── api/            # API FastAPI
-│   ├── db/             # Schéma PostgreSQL
-│   ├── Dockerfile      # Image backend
-│   └── requirements.txt
-├── frontend/
-│   ├── src/
-│   │   ├── components/ # Atomic Design
-│   │   ├── pages/      # 5 pages
-│   │   └── lib/        # Client API
-│   ├── package.json
-│   └── Dockerfile      # À créer
-├── docker-compose.yml  # Orche**stration
-├── GUIDE_MODULES.md    # Par module
-├── TUTORIEL_COMPLET.md # Pédagogique
-├── main.pdf            # Mémoire
-└── README.md           # Ce fichier
+# Frontend : http://localhost:3000
+# API docs : http://localhost:8000/docs
 ```
 
 ## Points critiques à connaître
 
-### Bases de données
+### 🗄️ Base de données
 - 4 tables : `asn`, `prefixes`, `countries`, `ai_recommendations`
-- UPSERT pattern (pas de doublons si re-collecte)
-- LATERAL JOIN pour calculer ROA coverage %
+- UPSERT pattern : pas de doublons si re-collecte
+- LATERAL JOIN pour ROA coverage % (calculé à la volée)
 
-### Collecteur
-- 5 sources APIs publiques
-- Rate limit 0.5s entre requêtes
-- Scheduling 6h automatique
-- Try/except par ASN (résilience)
+### 🔄 Collecteur
+- 5 sources APIs : MANRS v2 + RIPE Stat + RPKI Validator + PeeringDB + CAIDA Spoofer
+- Rate limit 0.5s entre requêtes (respect des APIs)
+- Scheduling 6h automatique (met à jour le dashboard)
+- Try/except par ASN : si un échoue, le collecteur continue
 
-### API
-- FastAPI + RealDictCursor (sérialisation JSON direct)
-- CORS configuré pour localhost:3000
-- 5 endpoints : /stats, /countries, /countries/{code}, /asn/{number}, /search
+### 🌐 API
+- FastAPI + RealDictCursor (JSON direct, pas de DTO)
+- CORS pour localhost:3000
+- 5 endpoints : stats, countries, countries/{code}, asn/{number}, search
 
-### Frontend
-- React 19 + TypeScript strict
+### ⚛️ Frontend
+- React 19 + TypeScript strict (pas de `any`)
 - Atomic Design : atoms → molecules → organisms → pages
 - Phosphor Icons (remplace emojis)
-- Recharts (graphiques) + Leaflet (carte)
+- Recharts (graphiques) + Leaflet (carte interactive)
+- Dark theme avec filter CSS sur Leaflet
 
-## Priorités de continuation
+## Équipe
 
-### Priorité 1 (bloquante)
-- [ ] Créer `frontend/Dockerfile` (multi-stage)
-- [ ] Créer `README.md` racine (CDC exige : lancer en 10 min)
-- [ ] Tester `docker compose up` complet
+- **Développeur principal** : François Mawutô Aboudou ZINSOU
+- **Binôme** : dodds6304
+- **Accompagnateur** : [À remplir par l'accompagnateur]
 
-### Priorité 2 (déploiement)
-- [ ] Déployer backend sur Render.com (free tier)
-- [ ] Déployer frontend sur Vercel
-- [ ] Obtenir URL de démo en ligne
+## Liens utiles
 
-### Priorité 3 (mémoire)
-- [ ] Remplir les placeholders `[À compléter]` (page de garde + chapitre stage)
-- [ ] Créer 10 slides de soutenance
-
-## Contacts et ressources
-
-### Clé API MANRS
-- Email : franckzinsou06@gmail.com
-- Mot de passe : ManrsObs2026!
-- **Expire tous les 3 jours** → voir GUIDE_MODULES.md pour renouvellement
-
-### Observatoire existant
-- URL : https://observatory.manrs.org
-- Documentation : voir TUTORIEL_COMPLET.md chapitre 3
-
-## Prochaines étapes (après déploiement)
-
-- Module IA : générer recommandations personnalisées par ASN
-- Code splitting : passer bundle JS de 847KB à <500KB
-- Tests : suite complète (unit + integration)
-- CI/CD : GitHub Actions pour tests + déploiement
-
----
-
-**Comment utiliser ce repo ?**
-
-1. Lire `GUIDE_MODULES.md` pour comprendre l'architecture par module
-2. Lire `TUTORIEL_COMPLET.md` pour le "pourquoi" de chaque décision
-3. Lancer `docker compose up` et essayer le dashboard
-4. Attaquer la priorité 1 de continuation
-
-Bonne reprise ! 🚀
+- **Archive complète** : https://github.com/aboudou-cto-bloko/manrs-observatory
+- **Mémoire** : `main.pdf` (dans l'archive)
+- **API MANRS** : https://observatory.manrs.org
+- **RPKI Validator** : https://rpki-validator.ripe.net
+- **PeeringDB** : https://www.peeringdb.com
